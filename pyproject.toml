@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jamal"
+version = "1.0.0"
+description = "Repository maintenance issue analyzer"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    {name = "Luiz Fernando Gonçalves Rocha", email = "luizfgrocha04@gmail.com"},
+    {name = "José Eduardo Duarte Massucato",  email = "josedmassucato@gmail.com"},
+    {name = "Lucas Almeida Amaral",           email = "lucas.almeida1048@gmail.com"},
+    {name = "Vinicius Leite Censi Faria",     email = "artixsproductions@gmail.com"},
+]
+dependencies = [
+    "pydriller>=2.6",
+    "lizard>=1.17",
+    "pandas>=2.0",
+    "rich>=13.0",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+
+[project.scripts]
+jamal = "jamal.cli:cli"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
