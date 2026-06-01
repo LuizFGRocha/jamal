@@ -1,0 +1,9 @@
+"""Configuration constants for Jamal analysis thresholds."""
+
+BIG_COMMIT_FILES_THRESHOLD = 10
+BIG_COMMIT_CHURN_THRESHOLD = 500
+
+GROWTH_THRESHOLD = 1.2
+MIN_CHANGES_FOR_GROWTH = 3
+
+COUPLING_MIN_COMMITS = 2
