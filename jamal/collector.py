@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from pydriller import Repository
 
 from jamal.models import CommitInfo, FileChange
@@ -6,12 +9,28 @@ from jamal.models import CommitInfo, FileChange
 class Collector:
     """Collects commit history from a git repository using pydriller."""
 
-    def __init__(self, repo_path: str) -> None:
+    def __init__(
+        self,
+        repo_path: str,
+        since: Optional[datetime] = None,
+        until: Optional[datetime] = None,
+    ) -> None:
         self.repo_path = repo_path
+        self.since = since
+        self.until = until
+
+    def _build_kwargs(self) -> dict:
+        kwargs: dict = {}
+        if self.since:
+            kwargs["since"] = self.since
+        if self.until:
+            kwargs["to"] = self.until
+        return kwargs
 
     def collect(self) -> list[CommitInfo]:
+        kwargs = self._build_kwargs()
         commits = []
-        for commit in Repository(self.repo_path).traverse_commits():
+        for commit in Repository(self.repo_path, **kwargs).traverse_commits():
             commits.append(
                 CommitInfo(
                     hash=commit.hash,
