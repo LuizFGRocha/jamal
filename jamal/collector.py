@@ -31,6 +31,14 @@ class Collector:
         kwargs = self._build_kwargs()
         commits = []
         for commit in Repository(self.repo_path, **kwargs).traverse_commits():
+            files = [
+                FileChange(
+                    filename=mod.new_path or mod.old_path or "",
+                    added_lines=mod.added_lines,
+                    removed_lines=mod.deleted_lines,
+                )
+                for mod in commit.modified_files
+            ]
             commits.append(
                 CommitInfo(
                     hash=commit.hash,
@@ -38,7 +46,7 @@ class Collector:
                     author_email=commit.author.email,
                     date=commit.author_date,
                     message=commit.msg,
-                    files_changed=[],
+                    files_changed=files,
                 )
             )
         return commits
