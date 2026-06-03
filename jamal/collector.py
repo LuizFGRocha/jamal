@@ -22,6 +22,7 @@ class Collector:
         self.branch = branch
 
     def _build_kwargs(self) -> dict:
+        """Build keyword arguments for pydriller's Repository based on active filters."""
         kwargs: dict = {}
         if self.since:
             kwargs["since"] = self.since
