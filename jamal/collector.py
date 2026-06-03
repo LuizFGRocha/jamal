@@ -14,10 +14,12 @@ class Collector:
         repo_path: str,
         since: Optional[datetime] = None,
         until: Optional[datetime] = None,
+        branch: Optional[str] = None,
     ) -> None:
         self.repo_path = repo_path
         self.since = since
         self.until = until
+        self.branch = branch
 
     def _build_kwargs(self) -> dict:
         kwargs: dict = {}
@@ -25,6 +27,8 @@ class Collector:
             kwargs["since"] = self.since
         if self.until:
             kwargs["to"] = self.until
+        if self.branch:
+            kwargs["only_in_branch"] = self.branch
         return kwargs
 
     def collect(self) -> list[CommitInfo]:
