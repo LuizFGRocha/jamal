@@ -43,3 +43,26 @@ class Reporter:
                 f"{h.hotspot_score:.1f}",
             )
         console.print(table)
+
+    def print_big_commits(self, commits: list[CommitInfo]) -> None:
+        """Print large commits table."""
+        if not commits:
+            console.print("[yellow]No large commits found.[/yellow]")
+            return
+        table = Table(title="[bold orange1]Large Commits[/bold orange1]", box=box.ROUNDED)
+        table.add_column("Hash", style="yellow")
+        table.add_column("Author")
+        table.add_column("Date")
+        table.add_column("Files", justify="right")
+        table.add_column("Churn", justify="right", style="bold red")
+        table.add_column("Message")
+        for c in commits:
+            table.add_row(
+                c.hash[:8],
+                c.author,
+                c.date.strftime("%Y-%m-%d"),
+                str(len(c.files_changed)),
+                str(c.total_churn),
+                c.message.split("\n")[0][:60],
+            )
+        console.print(table)
