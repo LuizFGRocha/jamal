@@ -20,5 +20,5 @@ class Extractor:
             cyclomatic_complexity=round(avg_complexity, 2),
             lines_of_code=analysis.nloc or 0,
             function_count=len(functions),
-            token_count=0,
+            token_count=analysis.token_count or 0,
         )
