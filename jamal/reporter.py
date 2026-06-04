@@ -4,6 +4,7 @@ from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 
 from jamal.models import CommitInfo, FileAnalysis
 
@@ -33,14 +34,18 @@ class Reporter:
         table.add_column("Changes", justify="right")
         table.add_column("Churn", justify="right")
         table.add_column("Avg CC", justify="right")
+        table.add_column("Bus Factor", justify="right")
         table.add_column("Score", justify="right", style="bold red")
         for h in hotspots:
+            score = h.hotspot_score
+            style = "red" if score > 50 else ("yellow" if score > 20 else "green")
             table.add_row(
                 h.filename,
                 str(h.change_count),
                 str(h.total_churn),
                 f"{h.avg_complexity:.1f}",
-                f"{h.hotspot_score:.1f}",
+                str(h.bus_factor),
+                Text(f"{score:.1f}", style=style),
             )
         console.print(table)
 
