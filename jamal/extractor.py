@@ -18,7 +18,7 @@ class Extractor:
         return FileMetrics(
             filename=filepath,
             cyclomatic_complexity=round(avg_complexity, 2),
-            lines_of_code=0,
+            lines_of_code=analysis.nloc or 0,
             function_count=len(functions),
             token_count=0,
         )
