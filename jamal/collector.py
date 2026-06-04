@@ -33,25 +33,29 @@ class Collector:
         return kwargs
 
     def collect(self) -> list[CommitInfo]:
+        """Traverse the repository and return a list of CommitInfo objects."""
         kwargs = self._build_kwargs()
         commits = []
-        for commit in Repository(self.repo_path, **kwargs).traverse_commits():
-            files = [
-                FileChange(
-                    filename=mod.new_path or mod.old_path or "",
-                    added_lines=mod.added_lines,
-                    removed_lines=mod.deleted_lines,
+        try:
+            for commit in Repository(self.repo_path, **kwargs).traverse_commits():
+                files = [
+                    FileChange(
+                        filename=mod.new_path or mod.old_path or "",
+                        added_lines=mod.added_lines,
+                        removed_lines=mod.deleted_lines,
+                    )
+                    for mod in commit.modified_files
+                ]
+                commits.append(
+                    CommitInfo(
+                        hash=commit.hash,
+                        author=commit.author.name,
+                        author_email=commit.author.email,
+                        date=commit.author_date,
+                        message=commit.msg,
+                        files_changed=files,
+                    )
                 )
-                for mod in commit.modified_files
-            ]
-            commits.append(
-                CommitInfo(
-                    hash=commit.hash,
-                    author=commit.author.name,
-                    author_email=commit.author.email,
-                    date=commit.author_date,
-                    message=commit.msg,
-                    files_changed=files,
-                )
-            )
+        except Exception:
+            return []
         return commits
