@@ -1,5 +1,8 @@
 """Formats and outputs Jamal's analysis results."""
 
+import json
+from pathlib import Path
+
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
@@ -71,3 +74,7 @@ class Reporter:
                 c.message.split("\n")[0][:60],
             )
         console.print(table)
+
+    def export_json(self, data: dict, filepath: str) -> None:
+        """Export analysis results to a JSON file."""
+        Path(filepath).write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
