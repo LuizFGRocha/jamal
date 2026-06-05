@@ -29,6 +29,7 @@ class Extractor:
             return self._empty_metrics(filepath)
 
     def _empty_metrics(self, filepath: str) -> FileMetrics:
+        """Return zero-value metrics for files that cannot be parsed."""
         return FileMetrics(
             filename=filepath,
             cyclomatic_complexity=0.0,
