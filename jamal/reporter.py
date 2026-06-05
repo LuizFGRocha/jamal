@@ -1,5 +1,6 @@
 """Formats and outputs Jamal's analysis results."""
 
+import csv
 import json
 from pathlib import Path
 
@@ -78,3 +79,19 @@ class Reporter:
     def export_json(self, data: dict, filepath: str) -> None:
         """Export analysis results to a JSON file."""
         Path(filepath).write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+
+    def export_csv(self, hotspots: list[FileAnalysis], filepath: str) -> None:
+        """Export hotspot data to a CSV file."""
+        fieldnames = ["filename", "change_count", "total_churn", "avg_complexity", "bus_factor", "hotspot_score"]
+        with open(filepath, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for h in hotspots:
+                writer.writerow({
+                    "filename": h.filename,
+                    "change_count": h.change_count,
+                    "total_churn": h.total_churn,
+                    "avg_complexity": h.avg_complexity,
+                    "bus_factor": h.bus_factor,
+                    "hotspot_score": round(h.hotspot_score, 2),
+                })
