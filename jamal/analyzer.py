@@ -39,3 +39,8 @@ class Analyzer:
         stats = self._build_file_stats()
         analyses = [self._build_file_analysis(fn, s) for fn, s in stats.items()]
         return sorted(analyses, key=lambda x: x.hotspot_score, reverse=True)[:top_n]
+
+    def get_big_commits(self, top_n: int = 10) -> list[CommitInfo]:
+        """Return commits that are suspiciously large."""
+        big = [c for c in self.commits if c.is_big]
+        return sorted(big, key=lambda x: x.total_churn, reverse=True)[:top_n]
