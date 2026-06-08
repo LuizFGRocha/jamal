@@ -66,3 +66,13 @@ class Analyzer:
                     growing.append(self._build_file_analysis(filename, stats[filename]))
 
         return sorted(growing, key=lambda x: x.total_churn, reverse=True)[:top_n]
+
+    def get_churn_ratio(self) -> list[tuple[str, float]]:
+        """Return files sorted by churn-to-change-count ratio (avg churn per touch)."""
+        stats = self._build_file_stats()
+        ratios = [
+            (fn, s["churn"] / s["changes"])
+            for fn, s in stats.items()
+            if s["changes"] > 0
+        ]
+        return sorted(ratios, key=lambda x: x[1], reverse=True)
