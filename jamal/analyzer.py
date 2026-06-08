@@ -1,6 +1,7 @@
 """Analyzer module for identifying maintenance problem indicators."""
 
 from collections import defaultdict
+from itertools import combinations
 from typing import Optional
 
 from jamal.models import CommitInfo, FileAnalysis, FileMetrics
@@ -66,6 +67,21 @@ class Analyzer:
                     growing.append(self._build_file_analysis(filename, stats[filename]))
 
         return sorted(growing, key=lambda x: x.total_churn, reverse=True)[:top_n]
+
+    def get_coupled_files(self, top_n: int = 10) -> list[tuple[str, str, int]]:
+        """Return pairs of files that are frequently changed together."""
+        from jamal.config import COUPLING_MIN_COMMITS
+        co_changes: dict = defaultdict(int)
+        for commit in self.commits:
+            filenames = [f.filename for f in commit.files_changed]
+            for a, b in combinations(sorted(filenames), 2):
+                co_changes[(a, b)] += 1
+        pairs = [
+            (a, b, count)
+            for (a, b), count in co_changes.items()
+            if count >= COUPLING_MIN_COMMITS
+        ]
+        return sorted(pairs, key=lambda x: x[2], reverse=True)[:top_n]
 
     def get_churn_ratio(self) -> list[tuple[str, float]]:
         """Return files sorted by churn-to-change-count ratio (avg churn per touch)."""
