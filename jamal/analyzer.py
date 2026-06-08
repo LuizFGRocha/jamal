@@ -44,3 +44,25 @@ class Analyzer:
         """Return commits that are suspiciously large."""
         big = [c for c in self.commits if c.is_big]
         return sorted(big, key=lambda x: x.total_churn, reverse=True)[:top_n]
+
+    def get_growing_files(self, top_n: int = 10) -> list[FileAnalysis]:
+        """Return files whose churn is trending upward over time."""
+        from jamal.config import GROWTH_THRESHOLD, MIN_CHANGES_FOR_GROWTH
+        churn_over_time: dict = defaultdict(list)
+        for commit in sorted(self.commits, key=lambda c: c.date):
+            for f in commit.files_changed:
+                churn_over_time[f.filename].append(f.churn)
+
+        growing = []
+        stats = self._build_file_stats()
+        for filename, churns in churn_over_time.items():
+            if len(churns) < MIN_CHANGES_FOR_GROWTH:
+                continue
+            mid = len(churns) // 2
+            first_avg = sum(churns[:mid]) / mid if mid else 0
+            second_avg = sum(churns[mid:]) / len(churns[mid:])
+            if first_avg == 0 or second_avg > first_avg * GROWTH_THRESHOLD:
+                if filename in stats:
+                    growing.append(self._build_file_analysis(filename, stats[filename]))
+
+        return sorted(growing, key=lambda x: x.total_churn, reverse=True)[:top_n]
