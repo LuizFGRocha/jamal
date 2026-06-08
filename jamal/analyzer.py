@@ -92,3 +92,22 @@ class Analyzer:
             if s["changes"] > 0
         ]
         return sorted(ratios, key=lambda x: x[1], reverse=True)
+
+    def get_summary(self) -> dict:
+        """Return a high-level summary of the repository."""
+        author_counts: dict = defaultdict(int)
+        total_churn = 0
+        all_files: set = set()
+        for commit in self.commits:
+            author_counts[commit.author] += 1
+            total_churn += commit.total_churn
+            for f in commit.files_changed:
+                all_files.add(f.filename)
+        n = len(self.commits)
+        return {
+            "total_commits": n,
+            "total_files": len(all_files),
+            "total_authors": len(author_counts),
+            "avg_churn_per_commit": round(total_churn / n, 1) if n else 0,
+            "top_authors": sorted(author_counts.items(), key=lambda x: x[1], reverse=True)[:5],
+        }
