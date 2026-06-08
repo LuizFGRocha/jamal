@@ -82,7 +82,7 @@ class Reporter:
         Path(filepath).write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
 
     def export_csv(self, hotspots: list[FileAnalysis], filepath: str) -> None:
-        """Export hotspot data to a CSV file."""
+        """Export hotspot data to a CSV file with UTF-8 encoding."""
         fieldnames = ["filename", "change_count", "total_churn", "avg_complexity", "bus_factor", "hotspot_score"]
         with open(filepath, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
