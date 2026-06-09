@@ -36,7 +36,12 @@ class Analyzer:
         )
 
     def get_hotspots(self, top_n: int = 10) -> list[FileAnalysis]:
-        """Return files ranked by hotspot score (change frequency × complexity)."""
+        """Return files ranked by hotspot score (change frequency × complexity).
+
+        The score is computed by FileAnalysis.hotspot_score and combines change
+        frequency with cyclomatic complexity, giving higher weight to files that
+        change often *and* are structurally complex.
+        """
         stats = self._build_file_stats()
         analyses = [self._build_file_analysis(fn, s) for fn, s in stats.items()]
         return sorted(analyses, key=lambda x: x.hotspot_score, reverse=True)[:top_n]
