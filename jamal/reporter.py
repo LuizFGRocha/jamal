@@ -27,6 +27,10 @@ class Reporter:
             f"[bold]Authors:[/bold]              {summary['total_authors']}",
             f"[bold]Avg churn/commit:[/bold]     {summary['avg_churn_per_commit']}",
         ]
+        if summary.get("top_authors"):
+            lines.append("\n[bold]Top contributors:[/bold]")
+            for name, count in summary["top_authors"]:
+                lines.append(f"  {name}: {count} commits")
         console.print(Panel("\n".join(lines), title="[bold cyan]Repository Summary[/bold cyan]", expand=False))
 
     def print_hotspots(self, hotspots: list[FileAnalysis]) -> None:
