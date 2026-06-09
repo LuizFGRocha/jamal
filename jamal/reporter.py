@@ -81,6 +81,19 @@ class Reporter:
             )
         console.print(table)
 
+    def print_coupled_files(self, pairs: list[tuple]) -> None:
+        """Print frequently co-modified file pairs."""
+        if not pairs:
+            console.print("[yellow]No strongly coupled files found.[/yellow]")
+            return
+        table = Table(title="[bold blue]Coupled Files[/bold blue]", box=box.ROUNDED)
+        table.add_column("File A", style="cyan")
+        table.add_column("File B", style="cyan")
+        table.add_column("Co-changes", justify="right", style="bold blue")
+        for a, b, count in pairs:
+            table.add_row(a, b, str(count))
+        console.print(table)
+
     def print_growing_files(self, files: list[FileAnalysis]) -> None:
         """Print files with continuously growing churn."""
         if not files:
