@@ -81,6 +81,19 @@ class Reporter:
             )
         console.print(table)
 
+    def print_growing_files(self, files: list[FileAnalysis]) -> None:
+        """Print files with continuously growing churn."""
+        if not files:
+            console.print("[yellow]No growing files found.[/yellow]")
+            return
+        table = Table(title="[bold magenta]Continuously Growing Files[/bold magenta]", box=box.ROUNDED)
+        table.add_column("File", style="cyan")
+        table.add_column("Changes", justify="right")
+        table.add_column("Total Churn", justify="right", style="bold magenta")
+        for f in files:
+            table.add_row(f.filename, str(f.change_count), str(f.total_churn))
+        console.print(table)
+
     def export_json(self, data: dict, filepath: str) -> None:
         """Export analysis results to a JSON file."""
         Path(filepath).write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
