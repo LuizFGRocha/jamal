@@ -20,7 +20,9 @@ def cli():
 
 @cli.command()
 @click.argument("repo")
-def analyze(repo: str) -> None:
+@click.option("--output", type=click.Choice(["json", "csv"]), default=None, help="Export format.")
+@click.option("--output-file", default=None, help="Path for the exported file.")
+def analyze(repo: str, output: str, output_file: str) -> None:
     """Analyze REPO for maintenance issues.
 
     REPO can be a local path or a remote GitHub URL.
@@ -34,6 +36,15 @@ def analyze(repo: str) -> None:
     console.print(f"Found [bold]{len(commits)}[/bold] commits.\n")
     analyzer = Analyzer(commits)
     reporter = Reporter()
-    reporter.print_summary(analyzer.get_summary())
-    reporter.print_hotspots(analyzer.get_hotspots())
-    reporter.print_big_commits(analyzer.get_big_commits())
+    summary = analyzer.get_summary()
+    hotspots = analyzer.get_hotspots()
+    big_commits = analyzer.get_big_commits()
+    reporter.print_summary(summary)
+    reporter.print_hotspots(hotspots)
+    reporter.print_big_commits(big_commits)
+    if output and output_file:
+        if output == "json":
+            reporter.export_json({"summary": summary}, output_file)
+        elif output == "csv":
+            reporter.export_csv(hotspots, output_file)
+        console.print(f"\n[green]Exported to:[/green] {output_file}")
