@@ -21,16 +21,20 @@ def cli():
 @cli.command()
 @click.argument("repo")
 @click.option("--top", default=10, show_default=True, help="Number of results per section.")
+@click.option("--since", default=None, help="Start date filter (YYYY-MM-DD).")
+@click.option("--until", default=None, help="End date filter (YYYY-MM-DD).")
 @click.option("--output", type=click.Choice(["json", "csv"]), default=None, help="Export format.")
 @click.option("--output-file", default=None, help="Path for the exported file.")
-def analyze(repo: str, top: int, output: str, output_file: str) -> None:
+def analyze(repo: str, top: int, since: str, until: str, output: str, output_file: str) -> None:
     """Analyze REPO for maintenance issues.
 
     REPO can be a local path or a remote GitHub URL.
     """
+    since_dt = datetime.fromisoformat(since) if since else None
+    until_dt = datetime.fromisoformat(until) if until else None
     console.print(f"[bold green]Analyzing:[/bold green] {repo}")
     with console.status("[bold]Collecting commits…[/bold]"):
-        commits = Collector(repo).collect()
+        commits = Collector(repo, since=since_dt, until=until_dt).collect()
     if not commits:
         console.print("[red]No commits found.[/red]")
         return
