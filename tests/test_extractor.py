@@ -60,3 +60,11 @@ def test_extract_empty_file(tmp_path):
     metrics = Extractor().extract(str(empty))
     assert metrics.function_count == 0
     assert metrics.lines_of_code == 0
+
+
+def test_extract_complexity_simple_function(tmp_path):
+    """A function with no branches should have complexity 1."""
+    simple = tmp_path / "simple.py"
+    simple.write_text("def noop():\n    pass\n")
+    metrics = Extractor().extract(str(simple))
+    assert metrics.cyclomatic_complexity == pytest.approx(1.0)
