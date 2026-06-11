@@ -34,3 +34,13 @@ def test_collect_empty_repo(tmp_path):
 def test_collect_invalid_repo():
     commits = Collector("/nonexistent/path/repo").collect()
     assert commits == []
+
+
+def test_collect_churn_values(fixture_repo):
+    """Files should have non-negative churn values."""
+    commits = Collector(fixture_repo).collect()
+    for commit in commits:
+        for fc in commit.files_changed:
+            assert fc.added_lines >= 0
+            assert fc.removed_lines >= 0
+            assert fc.churn >= 0
