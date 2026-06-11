@@ -55,3 +55,11 @@ def test_export_csv_contains_all_columns(tmp_path):
     header = Path(out).read_text(encoding="utf-8").splitlines()[0]
     for col in ["filename", "change_count", "total_churn", "avg_complexity", "bus_factor"]:
         assert col in header
+
+
+def test_export_csv_row_count(tmp_path):
+    out = str(tmp_path / "rows.csv")
+    hotspots = [_analysis(f"f{i}.py") for i in range(5)]
+    Reporter().export_csv(hotspots, out)
+    lines = Path(out).read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 6  # header + 5 data rows
