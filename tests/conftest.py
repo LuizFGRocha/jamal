@@ -58,3 +58,24 @@ def fixture_repo(tmp_path_factory):
     run("git", "commit", "-m", "feat: add farewell to helper")
 
     return str(repo_dir)
+
+
+@pytest.fixture
+def big_commit_repo(tmp_path):
+    """A repo with one oversized commit (>500 lines of churn)."""
+    def run(*args):
+        subprocess.run(list(args), cwd=str(tmp_path), check=True, capture_output=True)
+
+    run("git", "init")
+    run("git", "config", "user.email", "test@example.com")
+    run("git", "config", "user.name", "Test Author")
+
+    files = []
+    for i in range(12):
+        f = tmp_path / f"module_{i}.py"
+        f.write_text("\n".join(f"def func_{j}(): pass" for j in range(50)))
+        files.append(f"module_{i}.py")
+
+    run("git", "add", ".")
+    run("git", "commit", "-m", "chore: giant initial commit")
+    return str(tmp_path)
