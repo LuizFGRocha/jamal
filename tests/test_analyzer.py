@@ -75,3 +75,20 @@ def test_get_summary_empty():
     summary = Analyzer([]).get_summary()
     assert summary["total_commits"] == 0
     assert summary["avg_churn_per_commit"] == 0
+
+
+def test_get_big_commits_sorted_by_churn():
+    commits = [
+        _commit("a", "Alice", [FileChange("f.py", 400, 200)]),
+        _commit("b", "Bob",   [FileChange("g.py", 300, 400)]),
+    ]
+    result = Analyzer(commits).get_big_commits()
+    assert result[0].total_churn >= result[1].total_churn
+
+
+def test_get_hotspots_bus_factor(fixture_repo):
+    from jamal.collector import Collector
+    commits = Collector(fixture_repo).collect()
+    hotspots = Analyzer(commits).get_hotspots()
+    for h in hotspots:
+        assert h.bus_factor >= 1
