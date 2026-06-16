@@ -1,3 +1,5 @@
+"""Collector module — traverses a git repository and extracts commit history."""
+
 from datetime import datetime
 from typing import Optional
 
@@ -33,7 +35,10 @@ class Collector:
         return kwargs
 
     def collect(self) -> list[CommitInfo]:
-        """Traverse the repository and return a list of CommitInfo objects."""
+        """Traverse the repository and return a list of CommitInfo objects.
+
+        Returns an empty list if the repository is empty, invalid, or inaccessible.
+        """
         kwargs = self._build_kwargs()
         commits = []
         try:
