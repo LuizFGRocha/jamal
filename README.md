@@ -89,3 +89,43 @@ Com relatório de cobertura:
 ```bash
 pytest tests/ -v --cov=jamal --cov-report=term-missing
 ```
+
+## Exemplo de Saída
+
+```
+Analyzing: https://github.com/pallets/flask
+Found 2847 commits.
+
+╭─────────────────── Repository Summary ────────────────────╮
+│ Total commits:       2847                                  │
+│ Unique files:        412                                   │
+│ Authors:             183                                   │
+│ Avg churn/commit:    38.4                                  │
+│                                                            │
+│ Top contributors:                                          │
+│   David Lord: 812 commits                                  │
+│   Armin Ronacher: 523 commits                              │
+╰────────────────────────────────────────────────────────────╯
+
+╭─ Top Hotspots ──────────────────────────────────────────────╮
+│ File              Changes  Churn  Avg CC  Bus Factor  Score │
+│ src/flask/app.py      312  18400     8.2          47  2558  │
+│ src/flask/ctx.py      198   9200     6.1          31  1208  │
+╰─────────────────────────────────────────────────────────────╯
+```
+
+## Estrutura do Projeto
+
+```
+jamal/
+├── jamal/
+│   ├── cli.py        # Ponto de entrada CLI
+│   ├── collector.py  # Coleta via pydriller
+│   ├── extractor.py  # Métricas via lizard
+│   ├── analyzer.py   # Algoritmos de análise
+│   ├── reporter.py   # Saída formatada
+│   ├── models.py     # Modelos de dados
+│   └── config.py     # Constantes
+├── tests/
+└── .github/workflows/ci.yml
+```
