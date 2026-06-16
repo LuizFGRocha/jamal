@@ -24,13 +24,16 @@ class Collector:
         self.branch = branch
 
     def _build_kwargs(self) -> dict:
-        """Build keyword arguments for pydriller's Repository based on active filters."""
+        """Build keyword arguments for pydriller's Repository based on active filters.
+
+        Only non-None filters are included so pydriller defaults are preserved.
+        """
         kwargs: dict = {}
-        if self.since:
+        if self.since is not None:
             kwargs["since"] = self.since
-        if self.until:
+        if self.until is not None:
             kwargs["to"] = self.until
-        if self.branch:
+        if self.branch is not None:
             kwargs["only_in_branch"] = self.branch
         return kwargs
 
