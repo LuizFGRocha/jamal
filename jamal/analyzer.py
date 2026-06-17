@@ -1,4 +1,8 @@
-"""Analyzer module for identifying maintenance problem indicators."""
+"""Analyzer module for identifying maintenance problem indicators.
+
+All public methods accept an optional ``top_n`` argument to cap the result list.
+The underlying data never changes between calls — results are computed on demand.
+"""
 
 from collections import defaultdict
 from itertools import combinations
