@@ -1,4 +1,8 @@
-"""Analyzer module for identifying maintenance problem indicators."""
+"""Analyzer module for identifying maintenance problem indicators.
+
+All public methods accept an optional ``top_n`` argument to cap the result list.
+The underlying data never changes between calls — results are computed on demand.
+"""
 
 from collections import defaultdict
 from itertools import combinations
@@ -51,26 +55,30 @@ class Analyzer:
         big = [c for c in self.commits if c.is_big]
         return sorted(big, key=lambda x: x.total_churn, reverse=True)[:top_n]
 
+    def _has_growth_trend(self, churns: list[int]) -> bool:
+        """Return True when the second half of churns exceeds the first by GROWTH_THRESHOLD."""
+        from jamal.config import GROWTH_THRESHOLD
+        mid = len(churns) // 2
+        first_avg = sum(churns[:mid]) / mid if mid else 0
+        second_avg = sum(churns[mid:]) / len(churns[mid:])
+        return first_avg == 0 or second_avg > first_avg * GROWTH_THRESHOLD
+
     def get_growing_files(self, top_n: int = 10) -> list[FileAnalysis]:
         """Return files whose churn is trending upward over time."""
-        from jamal.config import GROWTH_THRESHOLD, MIN_CHANGES_FOR_GROWTH
+        from jamal.config import MIN_CHANGES_FOR_GROWTH
         churn_over_time: dict = defaultdict(list)
         for commit in sorted(self.commits, key=lambda c: c.date):
             for f in commit.files_changed:
                 churn_over_time[f.filename].append(f.churn)
 
-        growing = []
         stats = self._build_file_stats()
-        for filename, churns in churn_over_time.items():
-            if len(churns) < MIN_CHANGES_FOR_GROWTH:
-                continue
-            mid = len(churns) // 2
-            first_avg = sum(churns[:mid]) / mid if mid else 0
-            second_avg = sum(churns[mid:]) / len(churns[mid:])
-            if first_avg == 0 or second_avg > first_avg * GROWTH_THRESHOLD:
-                if filename in stats:
-                    growing.append(self._build_file_analysis(filename, stats[filename]))
-
+        growing = [
+            self._build_file_analysis(filename, stats[filename])
+            for filename, churns in churn_over_time.items()
+            if len(churns) >= MIN_CHANGES_FOR_GROWTH
+            and filename in stats
+            and self._has_growth_trend(churns)
+        ]
         return sorted(growing, key=lambda x: x.total_churn, reverse=True)[:top_n]
 
     def get_coupled_files(self, top_n: int = 10) -> list[tuple[str, str, int]]:
