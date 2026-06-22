@@ -26,7 +26,7 @@ Analisar a evolução de um repositório de software ao longo do tempo, combinan
 ## Instalação
 
 ```bash
-git clone https://github.com/<usuario>/jamal.git
+git clone https://github.com/LuizFGRocha/jamal.git
 cd jamal
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
@@ -40,6 +40,8 @@ uv venv && uv pip install -e ".[dev]"
 ```
 
 ## Uso
+
+> **Observação:** nos exemplos abaixo, `.` representa o caminho para o repositório a ser analisado (por exemplo, `/caminho/para/repositorio`).
 
 ```bash
 # Analisar um repositório local
@@ -129,3 +131,8 @@ jamal/
 ├── tests/
 └── .github/workflows/ci.yml
 ```
+
+## Uso de IA
+Utilizamos ferramentas de Inteligência Artificial para apoiar a refatoração de código, a identificação e correção de bugs e a avaliação da qualidade dos testes, como a busca por comportamentos não contemplados pela suíte existente.
+
+As decisões de projeto, implementação e validação final permaneceram sob responsabilidade da equipe. A principal ferramenta utilizada foi o GitHub Copilot, com uso predominante do modelo Claude.
